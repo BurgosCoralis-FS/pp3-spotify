@@ -49,3 +49,5 @@ cd server && npm run dev
 - [http://localhost:3001/login](http://localhost:3000/login) Endpoint to allow the user to login to the application.
 
 - [http://localhost:3001/refresh](http://localhost:3001/refresh) Endpoint to refresh the access token that allows the user to make requests to the Spotify API.
+
+- [http://localhost:3001/lyrics](http://localhost:3001/refresh) Endpoint to acquire and display the song's lyrics to the client.

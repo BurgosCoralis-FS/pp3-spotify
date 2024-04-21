@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import styled from 'styled-components'
 import SpotifyWebApi from "spotify-web-api-node"
+import axios from "axios"
 
 import Header from "../components/Header"
 import useAuth from "../services/useAuth"
@@ -20,11 +21,28 @@ export default function Dashboard({ code }) {
     const [searchResults, setSearchResults] = useState([])
     // console.log(searchResults)
     const [currentlyPlaying, setCurrentlyPlaying] = useState()
+    const [lyrics, setLyrics] = useState("")
 
     function chooseTrack(track){
         setCurrentlyPlaying(track)
         setSearchResults('')
+        setLyrics('')
     }
+
+    useEffect(() => {
+        if (!currentlyPlaying) return
+    
+        axios.get("http://localhost:3001/lyrics", {
+            params: {
+                track: currentlyPlaying.title,
+                artist: currentlyPlaying.artist,
+            },
+        })
+        .then(res => {
+            setLyrics(res.data.lyrics)
+            console.log(res.data.lyrics)
+        })
+    }, [currentlyPlaying])
 
     useEffect(() => {
         if(!accessToken) return
@@ -93,6 +111,7 @@ export default function Dashboard({ code }) {
                         style={styles.input} />
                     </div>
                 </div>}/>
+            
             <div style={styles.textContainer}>
                 {searchResults.length > 0 ? (
                     <div style={styles.recs}>
@@ -105,11 +124,17 @@ export default function Dashboard({ code }) {
                         ))}
                     </div>
                 ) : (
-                    <div>
+                    <>
                         <FaSpotify style={styles.spotifyIcon}/>
-                        <h3 style={styles.heading}>No Results</h3>
-                        <p style={styles.text}>Please type in a search query to get started...</p>
-                    </div>
+                        <h3 style={styles.heading}>{lyrics ? 'Lyrics' : 'No Results'}</h3>
+                        {lyrics ? (
+                            <div style={styles.lyricsContainer}>
+                                {lyrics}
+                            </div>
+                        ) : (
+                            <p style={styles.text}>Please type in a search query to get started...</p>
+                        )}
+                    </>
                 )}
             </div>
             <Player accessToken={accessToken} trackUri={currentlyPlaying?.uri} />
@@ -157,5 +182,9 @@ const styles = {
         gridTemplateRows: 'repeat(4, 1fr)',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '8px'
+    },
+    lyricsContainer: {
+        whiteSpace: 'pre',
+        color: 'white'
     }
 }

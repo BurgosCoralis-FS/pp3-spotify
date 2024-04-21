@@ -15,6 +15,7 @@ export default function Player({ accessToken, trackUri }) {
     }}
     play={play}
     showSaveIcon
+    hideAttribution
     uris={trackUri ? [trackUri] : []}
     styles={{
         bgColor: '#191414',
