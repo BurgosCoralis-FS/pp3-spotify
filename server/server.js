@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 require('dotenv').config()
-const lyricsFinder = require("lyrics-finder")
+const Genius = require("genius-lyrics");
 const SpotifyWebApi = require('spotify-web-api-node')
 
 const app = express()
@@ -19,7 +19,7 @@ app.post('/login', (req, res) => {
     const spotifyApi = new SpotifyWebApi({
         redirectUri: process.env.REDIRECT_URI,
         clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET
+        clientSecret: process.env.CLIENT_SECRET,
     })
 
     spotifyApi.authorizationCodeGrant(code)
@@ -43,9 +43,9 @@ app.post('/refresh', (req, res) => {
     const refreshToken = req.body.refreshToken
     // console.log(refreshToken)
     const spotifyApi = new SpotifyWebApi({
-        redirectUri: 'http://localhost:3000',
-        clientId: 'c2acd47d9c3f4a0f94ffc52f96c28e12',
-        clientSecret: '79acc410047c4129adefe91814974b2c',
+        redirectUri: process.env.REDIRECT_URI,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
         refreshToken
     })
 
@@ -65,12 +65,20 @@ app.post('/refresh', (req, res) => {
 
 // Get Lyrics
 app.get("/lyrics", async (req, res) => {
-    console.log(req.query.artist)
-    console.log(req.query.track)
-    const lyrics =
-    (await lyricsFinder(req.query.artist, req.query.track)) || "No Lyrics Found"
+    // console.log(`${req.query.track} by ${req.query.artist}`)
+    const Client = new Genius.Client(process.env.GENIUS_ACCESS_TOKEN)
+    const searches = (await Client.songs.search(`${req.query.track} by ${req.query.artist}`)) || 'No Lyrics Found'
+
+    const song = searches.find(item => {
+        const title = item.title.toLowerCase();
+        const artist = item.artist.name.toLowerCase();
+        const track = req.query.track.toLowerCase();
+        const artistName = req.query.artist.toLowerCase();
+        return title.includes(track) && artist.includes(artistName);
+    }) 
+
+    const lyrics = await song.lyrics()
     res.json({ lyrics })
-    console.log(lyrics)
 })
 
 app.listen(PORT, () => {

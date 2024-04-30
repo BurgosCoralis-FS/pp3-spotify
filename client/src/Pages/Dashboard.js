@@ -77,38 +77,20 @@ export default function Dashboard({ code }) {
 
         return () => cancel = true
     },[search, accessToken])
-
-    const Input = styled.input`
-    background: transparent;
-    border: none;
-    border-bottom: 1.5px solid white;
-    font-size: 14px;
-    line-height: 20px;
-    padding: 5px 10px;
-    width: 100%;
-    color: white;
-    box-sizing: border-box;
-
-    &:focus {
-        outline: none;
-    }
-
-    &::placeholder {
-        color: #7DD79D
-    }
-    `
+    
     return (
         <div style={styles.body}>
             <Header searchbar={
                 <div style={styles.container}>
                     <div> <IoSearch style={styles.icon}/> </div>
                     <div>
-                        <Input 
-                        type='search'
+                        <input type={'search'}
+                        className='searchInput' 
                         value={search}
-                        placeholder="Search..."
-                        onChange={e => setSearch(e.target.value)}
-                        style={styles.input} />
+                        onChange={e => setSearch(e.target.value)} 
+                        placeholder='Search...'
+                        style={styles.input}
+                        />
                     </div>
                 </div>}/>
             
@@ -147,7 +129,8 @@ const styles = {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        gap: '5px'
+        gap: '5px',
+        marginTop: '2%'
     },
     icon: {
         color: 'white',
@@ -155,7 +138,7 @@ const styles = {
     },
     spotifyIcon: {
         color: '#1bb954',
-        fontSize: '50px'
+        fontSize: '50px',
     },
     heading: {
         color: 'white',
@@ -175,7 +158,8 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '80vh'
+        minHeight: '75vh',
+        marginTop: '2%'
     },
     recs: {
         display: 'grid',
@@ -185,6 +169,20 @@ const styles = {
     },
     lyricsContainer: {
         whiteSpace: 'pre',
-        color: 'white'
+        color: 'white',
+        maxHeight: '55vh',
+        overflow: 'auto'
+    },
+    input: {
+        background: 'transparent',
+        border: 'none',
+        borderBottom: '1.5px solid white',
+        fontSize: '14px',
+        lineHeight: '20px',
+        padding: '5px 10px',
+        width: '100%',
+        color: 'white',
+        boxSizing: 'border-box',
+        outline: 'none'
     }
 }
