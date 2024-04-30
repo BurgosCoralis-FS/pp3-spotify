@@ -18,9 +18,10 @@ sudo kill -9 <PID>
 # Getting Started
  We will need to create a .env file in the root directory of the project. The .env file should contain the following: 
 ```
-PORT=3000
+PORT=3001
 CLIENT_ID="c2acd47d9c3f4a0f94ffc52f96c28e12"
 CLIENT_SECRET=
+GENIUS_ACCESS_TOKEN="gWXUvJfz9plttf-2hNGKgZxZjMbqirNYD6QA86UcqFQGkxGvvqP4Fribw5m3Ez4U"
 REDIRECT_URI="http://localhost:3000"
 ```
 
@@ -49,3 +50,4 @@ cd server && npm run dev
 - [http://localhost:3001/login](http://localhost:3000/login) Endpoint to allow the user to login to the application.
 
 - [http://localhost:3001/refresh](http://localhost:3001/refresh) Endpoint to refresh the access token that allows the user to make requests to the Spotify API.
+- [http://localhost:3001/lyrics](http://localhost:3001/lyrics) Endpoint to acquire and display the song's lyrics to the client.
