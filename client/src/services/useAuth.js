@@ -12,7 +12,10 @@ export default function useAuth(code) {
             setAccessToken(res.data.accessToken)
             setRefreshToken(res.data.refreshToken)
             setExpiresIn(res.data.expiresIn)
-            window.history.pushState({}, null, "/")
+            if(res.data.accessToken){
+                localStorage.setItem('accessToken', (res.data.accessToken))
+            }
+            window.history.pushState({}, null, "/dashboard")
         })
         .catch(() => {
             window.location = "/"

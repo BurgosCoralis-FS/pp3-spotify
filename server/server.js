@@ -1,9 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-require('dotenv').config()
-const Genius = require("genius-lyrics");
+const Genius = require("genius-lyrics")
 const SpotifyWebApi = require('spotify-web-api-node')
+
+require('dotenv').config()
 
 const app = express()
 app.use(cors())
@@ -27,7 +28,7 @@ app.post('/login', (req, res) => {
         res.json({
             accessToken: data.body.access_token,
             refreshToken: data.body.refresh_token,
-            expiresIn: data.body.expires_in
+            expiresIn: data.body.expires_in,
         })
 
         spotifyApi.setAccessToken(data.body.access_token)
@@ -35,6 +36,7 @@ app.post('/login', (req, res) => {
     })
     .catch(err => {
         console.error('Error logging in: ' + err.message)
+        res.redirect('/')
     }) 
 })
 
@@ -67,7 +69,9 @@ app.post('/refresh', (req, res) => {
 app.get("/lyrics", async (req, res) => {
     // console.log(`${req.query.track} by ${req.query.artist}`)
     const Client = new Genius.Client(process.env.GENIUS_ACCESS_TOKEN)
-    const searches = (await Client.songs.search(`${req.query.track} by ${req.query.artist}`)) || 'No Lyrics Found'
+    const searches = (
+        await Client.songs.search(`
+        ${req.query.track} by ${req.query.artist}`)) 
 
     const song = searches.find(item => {
         const title = item.title.toLowerCase();
@@ -77,7 +81,16 @@ app.get("/lyrics", async (req, res) => {
         return title.includes(track) && artist.includes(artistName);
     }) 
 
+    if (!song) {
+        return res.json({ lyrics: "No Lyrics Found" });
+    }
+
     const lyrics = await song.lyrics()
+
+    if (!lyrics) {
+        return res.json({ lyrics: "No Lyrics Found" });
+    }
+    
     res.json({ lyrics })
 })
 
