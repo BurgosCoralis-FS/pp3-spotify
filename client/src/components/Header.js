@@ -5,6 +5,7 @@ export default function Header(props) {
         <header style={styles.container}>
             <FaSpotify style={styles.icon} />
             {props.searchbar}
+            {props.logout}
         </header>
     )
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import styled from 'styled-components'
 import SpotifyWebApi from "spotify-web-api-node"
 import axios from "axios"
 
@@ -40,19 +39,22 @@ export default function Dashboard({ code }) {
         })
         .then(res => {
             setLyrics(res.data.lyrics)
-            console.log(res.data.lyrics)
+            // console.log(res.data.lyrics)
         })
     }, [currentlyPlaying])
 
     useEffect(() => {
         if(!accessToken) return
         spotifyApi.setAccessToken(accessToken)
+        const userToken = localStorage.getItem('accessToken')
+        if(!userToken) {
+            window.location = '/'
+        }
     },[accessToken])
 
     useEffect(() => {
         if(!search) return setSearchResults([])
-        if(!accessToken) return
-
+        if (!accessToken) return
         let cancel = false
 
         spotifyApi.searchTracks(search)
@@ -77,10 +79,16 @@ export default function Dashboard({ code }) {
 
         return () => cancel = true
     },[search, accessToken])
+
+    const logout = () => {
+        localStorage.removeItem('accessToken')
+        window.location = "/"
+    }
     
     return (
         <div style={styles.body}>
-            <Header searchbar={
+            <Header 
+            searchbar={
                 <div style={styles.container}>
                     <div> <IoSearch style={styles.icon}/> </div>
                     <div>
@@ -92,7 +100,10 @@ export default function Dashboard({ code }) {
                         style={styles.input}
                         />
                     </div>
-                </div>}/>
+                </div>} 
+            logout={<button 
+            style={styles.button}
+            onClick={logout}>Log out</button>}/>
             
             <div style={styles.textContainer}>
                 {searchResults.length > 0 ? (
@@ -184,5 +195,12 @@ const styles = {
         color: 'white',
         boxSizing: 'border-box',
         outline: 'none'
+    },
+    button: {
+        background: 'transparent',
+        border: '1px solid white',
+        fontSize: '16px',
+        color: 'white',
+        fontWeight: 'bold'
     }
 }
